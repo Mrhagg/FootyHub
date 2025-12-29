@@ -1,6 +1,8 @@
 ﻿namespace FootyHub.Domain.Enums;
 
-public  class Matchresult
+public  enum Matchresult
 {
-
+    Win,
+    Draw,
+    Lose
 }

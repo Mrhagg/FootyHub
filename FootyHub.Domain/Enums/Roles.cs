@@ -1,6 +1,7 @@
 ﻿namespace FootyHub.Domain.Enums;
 
-public class Roles
+public enum Roles
 {
-
+    Coach,
+    Player
 }
