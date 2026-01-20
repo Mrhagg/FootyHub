@@ -2,5 +2,5 @@
 
 public class CreatePlayerResult
 {
-
+    public Guid PlayerId { get; init; }
 }

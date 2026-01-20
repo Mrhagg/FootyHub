@@ -1,12 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FootyHub.Application.Common.Interface;
+using FootyHub.Domain.Entities;
+using FootyHub.Infrastructure.Persistence.Context;
 
-namespace FootyHub.Infrastructure.Persistence.Repositories
+namespace FootyHub.Infrastructure.Persistence.Repositories;
+
+public class PlayerRepository : IPlayerRepository
 {
-    internal class PlayerRepository
+    private readonly FootyHubDbContext _context;
+
+    public PlayerRepository(FootyHubDbContext context)
     {
+        _context = context;
+    }
+
+    public async Task AddAsync(Player player)
+    {
+        _context.Players.Add(player);
+        await _context.SaveChangesAsync();
     }
 }

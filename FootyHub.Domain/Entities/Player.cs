@@ -6,21 +6,34 @@ public class Player
 {
 
     public Guid Id { get; set; }
-    public string Name { get; set; } = null!;
+    public string FirstName { get; set; } = null!;
+    public string LastName { get; set; } = null!;
     public Position NaturalPosition { get; set; } = null!;
 
     public int ShirtNumber { get; set; }
-
-    public int Age { get; set; } 
-
     public string Nationality { get; set; } = null!;
 
-    public Player() { }
+    public DateTime DateOfBirth { get; set; }
 
-    public Player(string name, Position position)
-    {
-        Id = Guid.NewGuid();
-        Name = name;
-        NaturalPosition = position;
-    }
+    public Player(
+        string firstName,
+        string lastName,
+        Position naturalPosition,
+        int shirtNumber,
+        string nationality,
+        DateTime dateOfBirth)
+        
+        {
+            Id = Guid.NewGuid();
+            FirstName = firstName;
+            LastName = lastName;
+            NaturalPosition = naturalPosition;
+            ShirtNumber = shirtNumber;
+            Nationality = nationality;
+            DateOfBirth = dateOfBirth;
+        }
+
+    public int Age => DateTime.Now.Year - DateOfBirth.Year;
+
+
 }

@@ -1,6 +1,14 @@
-﻿namespace FootyHub.Application.Players.CreatePlayer;
+﻿using MediatR;
+using FootyHub.Domain.ValueObjects;
 
-public class CreatePlayerCommand
+namespace FootyHub.Application.Players.CreatePlayer;
+
+public class CreatePlayerCommand : IRequest<CreatePlayerResult>
 {
-
+    public string FirstName { get; init; } = null!;
+    public string LastName { get; init; } = null!;
+    public Position NaturalPosition { get; init; } = null!;
+    public int ShirtNumber { get; init; }
+    public string Nationality { get; init; } = null!;
+    public DateTime DateOfBirth { get; init; }
 }

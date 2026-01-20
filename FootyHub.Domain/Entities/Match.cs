@@ -21,7 +21,7 @@ public class Match
             throw new ArgumentException("Minutes played cannot exceed 120 minutes.");
 
         if (Performances.Any(p => p.PlayerId == player.Id))
-            throw new InvalidOperationException($"Player {player.Name} is already registered for this match.");
+            throw new InvalidOperationException($"Player {player.FirstName} is already registered for this match.");
 
         var performance = new PlayerMatchPerformance
         {
