@@ -43,4 +43,19 @@ public class Position
       PositionCategory.Attacker => 1.3m,
       _ => 1.0m
     };
+
+    public static Position FromCode(string code)
+    {
+        return code.ToUpper() switch
+        {
+            "ST" => Striker,
+            "CB" => CenterBack,
+            "WB" => WingBack,
+            "MF" => MidFielder,
+            "FW" => Winger,
+            "Gk" => new Position("GK", "Goalkeeper", PositionCategory.Goalkeeper),
+
+            _ => throw new ArgumentException($"Invalid position code: {code}")
+        };
+    }
 }

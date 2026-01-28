@@ -1,5 +1,6 @@
 ﻿using FootyHub.Application.Common.Interface;
 using FootyHub.Domain.Entities;
+using FootyHub.Domain.ValueObjects;
 using MediatR;
 
 namespace FootyHub.Application.Players.CreatePlayer;
@@ -18,10 +19,12 @@ public class CreatePlayerHandler
         CreatePlayerCommand request,
         CancellationToken cancellationToken)
     {
+        var position = Position.FromCode(request.PositionCode);
+
         var player = new Player(
             request.FirstName,
             request.LastName,
-            request.NaturalPosition,
+            position,
             request.ShirtNumber,
             request.Nationality,
             request.DateOfBirth

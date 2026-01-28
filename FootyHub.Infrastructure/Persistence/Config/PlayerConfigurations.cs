@@ -11,8 +11,9 @@ public class PlayerConfigurations : IEntityTypeConfiguration<Player>
         builder.HasKey(x => x.Id);
         builder.OwnsOne(x => x.NaturalPosition, pos =>
         {
-            pos.Property(p => p.Code).HasColumnName("PositionCode");
-            pos.Property(p => p.Category).HasColumnName("PositionCategory").HasConversion<string>();
+            pos.Property(p => p.Code).HasColumnName("PositionCode").IsRequired();
+            pos.Property(p => p.DisplayName).HasColumnName("PositionName").IsRequired();
+            pos.Property(p => p.Category).HasColumnName("PositionCategory").HasConversion<string>().IsRequired();
         });
     }
 }
