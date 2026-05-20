@@ -1,0 +1,32 @@
+﻿.btn-teams {
+    background-color: var(--primary-color, #007bff);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.05);
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+}
+
+.btn-teams:hover {
+    filter: brightness(90%);
+}
+
+.btn-teams:disabled {
+    opacity: 0.6;
+    cursor:pointer;
+}
+
+.btn-info {
+    background-color: var(--primary-color, #007bff);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.05);
+    padding: 5px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+}

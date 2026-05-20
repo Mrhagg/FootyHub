@@ -1,4 +1,5 @@
 ﻿using FootyHub.Application.Players.CreatePlayer;
+using FootyHub.Application.Players.GetPlayerProfile;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,6 +23,13 @@ namespace FootyHub.API.Players.Controllers
             var result = await _mediator.Send(command);
             return Ok(result);
         }
-        
+
+        [HttpGet]
+        public async Task<IActionResult> GetPlayers()
+        {
+            var players = await _mediator.Send(new GetPlayerProfileQuery());
+            return Ok(players);
+
+        }
     }
 }

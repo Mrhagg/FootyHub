@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using FootyHub.Domain.ValueObjects;
 
 namespace FootyHub.Application.Players.CreatePlayer;
 

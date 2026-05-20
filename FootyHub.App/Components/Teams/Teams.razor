@@ -1,0 +1,139 @@
+﻿@page "/teams"
+@using FootyHub.App.Models
+@inject HttpClient Http
+@rendermode InteractiveServer
+
+    
+<div class="container mt-4">
+    <h1 class="container mt-5">
+        Teams
+    </h1>
+    <button class="btn-teams" @onclick="FetchTeams" disabled="@isLoading">
+        @if (isLoading)
+        {
+            <span>Laddar...</span>
+        }
+        else
+        {
+            <span>Get Teams</span>
+        }
+    </button>
+
+    <hr class="my-4" />
+
+    @if(teams != null)
+    {
+        if(!teams.Any())
+        {
+            <div class="alert alert-info mt-3">Inga lag hittades i databasen.</div>
+        }
+        else
+        {
+            <div class="row mt-3">
+                @foreach(var team in teams)
+                {
+                    <div class="col-md-4 mb-3">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-dark text-white">
+                                <h5 class="mb-0">@team.Name</h5>
+                            </div>
+                            <div class="card-body">
+                                @if (team.Players == null || !team.Players.Any())
+                                {
+                                    <p class="text-muted fst-italic small">Inga spelare i laget än.</p>
+                                }
+                                else
+                                {
+                                    <ul class="list-group list-group-flush">
+                                        @foreach(var player in team.Players)
+                                        {
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <span> @player.FirstName @player.LastName</span>
+
+                                                <button class="btn-info" @onclick="() => SelectedPlayer(player)">
+                                                   Info
+                                                </button>
+                                                <span class="badge bg-secondary">#@player.ShirtNumber</span>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
+</div>
+
+@if (selectedPlayer != null)
+{
+    <div class="card mt-5 border-primary shadow animate-fade-in position-relative">
+        <button type="button" class="btn-close position-absolute top-0 end-0 m-3" aria-label="Close" @onclick="() => selectedPlayer = null"></button>
+        <div class="card-header bg-primary text-white py-3">
+            <h4 class="mb-0">Spelarinformation: @selectedPlayer.FirstName @selectedPlayer.LastName</h4>
+        </div>>
+        <div class="card-body p-4">
+            <div class="row text-center text-md-start">
+                <div class="col-md-3 mb-3 mb-md-0">
+                    <div class="p-3 bg-light rounded text-center">
+                        <span class="text-muted small d-block">Tröjnummer</span>
+                        <span class="fs-2 fw-bold text-dark">#@selectedPlayer.ShirtNumber</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3 mb-md-0">
+                <div class="p-3 bg-light rounded">
+                    <span class="text-muted small d-block">NATIONALITET</span>
+                    <span class="fs-5 fw-semibold text-dark">🇸🇪 @selectedPlayer.Nationality</span>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3 mb-md-0">
+                <div class="p-3 bg-light rounded">
+                    <span class="text-muted small d-block">ÅLDER</span>
+                    <span class="fs-5 fw-semibold text-dark">@selectedPlayer.Age år</span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="p-3 bg-light rounded">
+                    <span class="text-muted small d-block">POSITION</span>
+                    <span class="fs-5 fw-semibold text-dark">
+                        @(selectedPlayer.NaturalPosition?.DisplayName ?? "Ej tillgänglig")
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+
+
+@code {
+    private List<TeamDto>? teams;
+    private PlayerDto? selectedPlayer;
+    private bool isLoading = false;
+
+    private async Task FetchTeams()
+    {
+        isLoading = true;
+        try
+        {
+            teams = await Http.GetFromJsonAsync<List<TeamDto>>("/api/teams");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ett fel uppstod vid hämtning av lag: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void SelectedPlayer(PlayerDto player)
+    {
+        selectedPlayer = player;
+    }
+}

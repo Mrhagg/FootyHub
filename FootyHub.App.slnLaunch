@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "FootyHub.App\\FootyHub.App.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "FootyHub.API\\FootyHub.API.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

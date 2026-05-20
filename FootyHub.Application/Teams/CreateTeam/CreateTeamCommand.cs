@@ -1,6 +1,8 @@
-﻿namespace FootyHub.Application.Teams.CreateTeam;
+﻿using MediatR;
 
-public class CreateTeamCommand
+namespace FootyHub.Application.Teams.CreateTeam;
+
+public class CreateTeamCommand : IRequest<Guid>
 {
-
+    public string Name { get; init; } = null!;
 }

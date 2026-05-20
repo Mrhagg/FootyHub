@@ -1,5 +1,6 @@
 using FootyHub.Application.Common.Interface;
 using FootyHub.Application.Players.CreatePlayer;
+using FootyHub.Application.Teams.CreateTeam;
 using FootyHub.Infrastructure.Persistence.Context;
 using FootyHub.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -13,11 +14,14 @@ builder.Services.AddDbContext<FootyHubDbContext>(options =>
 builder.Services.AddScoped<IApplicationDbContext>(provider =>
     provider.GetRequiredService<FootyHubDbContext>());
 
+builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
+
 
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(
         typeof(CreatePlayerCommand).Assembly));
+
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
