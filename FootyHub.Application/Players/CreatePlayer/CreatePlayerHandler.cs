@@ -9,10 +9,13 @@ public class CreatePlayerHandler
     : IRequestHandler<CreatePlayerCommand, CreatePlayerResult>
 {
     private readonly IPlayerRepository _playerRepository;
+    private readonly IApplicationDbContext _context;
 
-    public CreatePlayerHandler(IPlayerRepository playerRepository)
+    public CreatePlayerHandler(IPlayerRepository playerRepository, IApplicationDbContext context)
     {
         _playerRepository = playerRepository;
+        _context = context;
+       
     }
 
     public async Task<CreatePlayerResult> Handle(
@@ -31,7 +34,7 @@ public class CreatePlayerHandler
         );
 
         await _playerRepository.AddAsync(player);
-
+        await _context.SaveChangesAsync(cancellationToken);
         return new CreatePlayerResult
         {
             PlayerId = player.Id

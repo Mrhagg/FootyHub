@@ -6,7 +6,7 @@
     
 <div class="container mt-4">
     <h1 class="container mt-5">
-        Teams
+        Lag
     </h1>
     <button class="btn-teams" @onclick="FetchTeams" disabled="@isLoading">
         @if (isLoading)
@@ -73,7 +73,7 @@
         <button type="button" class="btn-close position-absolute top-0 end-0 m-3" aria-label="Close" @onclick="() => selectedPlayer = null"></button>
         <div class="card-header bg-primary text-white py-3">
             <h4 class="mb-0">Spelarinformation: @selectedPlayer.FirstName @selectedPlayer.LastName</h4>
-        </div>>
+        </div>
         <div class="card-body p-4">
             <div class="row text-center text-md-start">
                 <div class="col-md-3 mb-3 mb-md-0">

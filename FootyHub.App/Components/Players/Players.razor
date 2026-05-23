@@ -1,0 +1,256 @@
+﻿@page "/players"
+@using FootyHub.App.Models
+@rendermode InteractiveServer
+
+<div class="player-info-container container mt-4">
+    <h1 class="mt-5">Spelare</h1>
+
+    <div class="d-flex gap-2">
+        <button class="btn-player btn btn-primary" @onclick="Fetchplayer" disabled="@isLoading">
+            @if (isLoading)
+            {
+                <span>Laddar...</span>
+            }
+            else
+            {
+                <span>Hämtar spelare</span>
+            }
+        </button>
+
+        <button class="btn btn-success" @onclick="OpenCreateForm">
+            @(showCreateForm ? "Avbryt" : "Skapa ny spelare")
+        </button>
+    </div>
+
+    @if (showCreateForm)
+    {
+        <div class="card mt-4 border-success shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Registrera ny spelare</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Förnamn</label>
+                        <input type="text" class="form-control" @bind="newFirstName" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Efternamn</label>
+                        <input type="text" class="form-control" @bind="newLastName" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Tröjnummer</label>
+                        <input type="number" class="form-control" @bind="newShirtNumber" />
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Födelsedatum</label>
+                        <input type="date" class="form-control" @bind="newDateOfBirth" />
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Nationalitet</label>
+                        <input type="text" class="form-control" @bind="newNationality" />
+                    </div>
+                </div>
+
+                <div class="row">
+                   
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Välj lag</label>
+                        <select class="form-select" @bind="selectedTeamId">
+                            <option value="">-- Välj ett lag --</option>
+                            @foreach (var team in availableTeams)
+                            {
+                                <option value="@team.Id">@team.Name</option>
+                            }
+                        </select>
+                    </div>
+
+                  
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Position</label>
+                        <select class="form-select" @bind="selectedPositionCode">
+                            <option value="">-- Välj position --</option>
+                            <option value="ST">Striker</option>
+                            <option value="CB">Center Back</option>
+                            <option value="CM">Central Midfielder</option>
+                            <option value="GK">Goalkeeper</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mt-3">
+                    <button type="button" class="btn btn-success" @onclick="HandleCreatePlayer" disabled="@isSubmitting">
+                        @if (isSubmitting)
+                        {
+                            <span>Sparar...</span>
+                        }
+                        else
+                        {
+                            <span>Spara spelare</span>
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+
+    <hr class="my-4" />
+
+    
+    @if (players != null)
+    {
+        if (!players.Any())
+        {
+            <div class="alert alert-info mt-3">Inga spelare hittades i databasen.</div>
+        }
+        else
+        {
+            <div class="row mt-3">
+                @foreach (var player in players)
+                {
+                    <div class="col-md-4 mb-3">
+                        <div class="card shadow-sm h-100 d-flex flex-column justify-content-between">
+                            <div>
+                                <div class="card-header bg-dark text-white">
+                                    <h5 class="mb-0">@player.FirstName @player.LastName</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Tröjnummer:</strong> @player.ShirtNumber</p>
+                                    <p><strong>Position:</strong> @(player.NaturalPosition?.DisplayName ?? "Ej tillgänglig")</p>
+                                </div>
+                            </div>
+                            <div class="p-3 pt-0">
+                                <button class="btn btn-info btn-sm w-100" @onclick="() => SelectedPlayer(player)">Info</button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
+</div>
+
+@code {
+    [Inject] private HttpClient _backendClient { get; set; } = default!;
+
+    private List<PlayerDto> players = new();
+
+   
+    private List<TeamDto> availableTeams = new();
+
+    private PlayerDto? selectedPlayer;
+    private bool isLoading = false;
+    private bool showCreateForm = false;
+    private bool isSubmitting = false;
+
+    private string newFirstName = string.Empty;
+    private string newLastName = string.Empty;
+    private int newShirtNumber;
+    private DateTime newDateOfBirth = DateTime.Today.AddYears(-20);
+    private string newNationality = string.Empty;
+
+    
+    private string selectedTeamId = string.Empty;
+    private string selectedPositionCode = string.Empty;
+
+    
+    private async Task OpenCreateForm()
+    {
+        showCreateForm = !showCreateForm;
+        if (showCreateForm)
+        {
+            newFirstName = "";
+            newLastName = "";
+            newShirtNumber = 0;
+            newDateOfBirth = DateTime.Today.AddYears(-20);
+            newNationality = "";
+            selectedTeamId = "";
+            selectedPositionCode = "";
+
+            try
+            {
+               
+                var teamsResult = await _backendClient.GetFromJsonAsync<List<TeamDto>>("/api/teams");
+                if (teamsResult != null)
+                {
+                    availableTeams = teamsResult;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Kunde inte hämta lag till dropdown: {ex.Message}");
+            }
+        }
+    }
+
+    private void ToggleCreateForm() => showCreateForm = !showCreateForm;
+
+    private async Task Fetchplayer()
+    {
+        isLoading = true;
+        try
+        {
+            var result = await _backendClient.GetFromJsonAsync<List<PlayerDto>>("/api/players");
+            if (result != null) players = result;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ett fel uppstod vid hämtning av spelare: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task HandleCreatePlayer()
+    {
+        if (string.IsNullOrEmpty(selectedTeamId))
+        {
+            Console.WriteLine("Valideringsfel: Du måste välja ett lag från listan.");
+            return;
+        }
+
+        isSubmitting = true;
+        try
+        {
+            var command = new
+            {
+                FirstName = newFirstName,
+                LastName = newLastName,
+                ShirtNumber = newShirtNumber,
+                DateOfBirth = newDateOfBirth,
+                Nationality = newNationality,
+                TeamId = Guid.Parse(selectedTeamId),
+                PositionCode = selectedPositionCode 
+            };
+
+            var response = await _backendClient.PostAsJsonAsync("/api/players", command);
+
+            if (response.IsSuccessStatusCode)
+            {
+                showCreateForm = false;
+                await Fetchplayer();
+            }
+            else
+            {
+               
+                var errorResponse = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Backend nekade sparande. Status: {response.StatusCode}. Detaljer: {errorResponse}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ett fel uppstod i frontend: {ex.Message}");
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private void SelectedPlayer(PlayerDto player) => selectedPlayer = player;
+}
